@@ -3,7 +3,7 @@ const {V1WebsocketClient} = require('okex-node');
 require('dotenv').load();
 const websocketUri = process.env['V1_WS_URL'];
 
-describe('OKEx websocket 接口测试', function() {
+describe.skip('OKEx websocket 接口测试', function() {
   describe('V1 websocket 连接测试', function() {
     it('成功连接上服务器', function(done) {
       const client = new V1WebsocketClient(websocketUri);
