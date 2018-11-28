@@ -69,7 +69,7 @@ describe('V3 API 推送-永续合约-行情', function() {
                     expect(item.volume_24h).to.be.not.empty;
                     // 系统时间戳
                     expect(item).to.have.property('timestamp');
-                    expect(item.timestamp).to.be.equal('BTC-USD-SWAP');
+                    expect(item.timestamp).to.be.a('string');
                     expect(item.timestamp).to.be.not.empty;
 
                     done();

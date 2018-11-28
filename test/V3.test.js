@@ -4,11 +4,15 @@ require('dotenv').load();
 const websocketV3Uri = process.env['V3_WS_URL'];
 
 describe('V3 websocket 连接测试', function() {
+    const client = new V3WebsocketClient(websocketV3Uri);
     it('成功连接上服务器', function(done) {
-        const client = new V3WebsocketClient(
-            websocketV3Uri);
         client.connect();
         client.on('open', () => done());
+    });
+
+    after(function(done) {
+        client.on('close', () => done());
+        client.close();
     });
 });
 
@@ -98,21 +102,20 @@ describe('V3 websocket 业务测试', function() {
     it('测试ping/pong', function(done) {
         const client = new V3WebsocketClient(websocketV3Uri);
         client.connect();
-        let counter = 0;
         client.on('message', function listener(message) {
+            console.log(message);
             if (message === 'pong') {
-                counter++;
-            }
-            if (counter > 0) {
-                client.close();
-                client.removeListener('message', listener);
+                done('error message pong');
             }
         });
-        client.on('close', function listener() {
-            expect(client.interval).to.be.null;
-            done();
-            client.removeListener('close', listener);
-        });
+        setTimeout(() => {
+            client.on('close', function listener() {
+                expect(client.interval).to.be.null;
+                done();
+                client.removeListener('close', listener);
+            });
+            client.close();
+        }, 1000);
     });
 
     after(function(done) {
