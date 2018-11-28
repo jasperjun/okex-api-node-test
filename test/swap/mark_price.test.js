@@ -1,5 +1,5 @@
 const expect = require('chai').expect;
-const { V3WebsocketClient } = require('okex-node')
+const { V3WebsocketClient } = require('okex-api-node')
 require('dotenv').load();
 const websocketV3Uri = process.env['V3_WS_URL'];
 

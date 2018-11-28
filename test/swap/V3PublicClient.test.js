@@ -1,5 +1,5 @@
 const expect = require('chai').expect;
-const { V3PublicClient } = require('okex-node');
+const { V3PublicClient } = require('okex-api-node');
 
 describe('V3 API 推送-永续合约-Instruments', function() {
 
