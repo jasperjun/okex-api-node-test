@@ -2,6 +2,7 @@ const expect = require('chai').expect;
 const { V3WebsocketClient } = require('okex-api-node');
 require('dotenv').load();
 const websocketV3Uri = process.env['V3_WS_URL'];
+const crc32 = require('crc-32');
 
 describe('V3 API 推送-永续合约-深度数据', function () {
 
@@ -87,6 +88,10 @@ describe('V3 API 推送-永续合约-深度数据', function () {
                     expect(result.data).to.be.a('Array');
                     expect(result.data.length).to.be.equal(1);
 
+                    expect(result).to.have.property('action');
+                    expect(result.action).to.be.a('string');
+                    expect(result.action).to.be.equal('partial');
+
                     const item = result.data[0];
 
                     expect(item).to.have.property('instrument_id');
@@ -95,6 +100,9 @@ describe('V3 API 推送-永续合约-深度数据', function () {
                     expect(item).to.have.property('timestamp');
                     expect(item.timestamp).to.be.not.empty;
 
+                    expect(item).to.have.property('checksum');
+                    expect(item.checksum).to.be.a('number');
+
                     expect(item).to.have.property('asks');
                     expect(item.asks).to.be.a('Array');
                     expect(item.asks.length).to.be.most(200);
@@ -102,6 +110,16 @@ describe('V3 API 推送-永续合约-深度数据', function () {
                     expect(item).to.have.property('bids');
                     expect(item.bids).to.be.a('Array');
                     expect(item.bids.length).to.be.most(200);
+
+                    // checksum
+                    const buff = [];
+                    for (let i = 0; i < 25; i++) {
+                        let ask = item.asks[i];
+                        let bid = item.bids[i];
+                        buff.push(bid[0]+":"+bid[1]+":"+ask[0]+":"+ask[1]);
+                    }
+                    const checksum = crc32.str(buff.join(":"));
+                    expect(checksum).to.be.equal(item.checksum);
 
                     done();
                 } catch(e) {
