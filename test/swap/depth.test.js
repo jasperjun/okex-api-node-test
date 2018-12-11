@@ -114,9 +114,16 @@ describe('V3 API 推送-永续合约-深度数据', function () {
                     // checksum
                     const buff = [];
                     for (let i = 0; i < 25; i++) {
-                        let ask = item.asks[i];
-                        let bid = item.bids[i];
-                        buff.push(bid[0]+":"+bid[1]+":"+ask[0]+":"+ask[1]);
+                        if (item.bids[i]) {
+                            const bid = item.bids[i];
+                            buff.push(bid[0]);
+                            buff.push(bid[1])
+                        }
+                        if (item.asks[i]) {
+                            const ask = item.asks[i];
+                            buff.push(ask[0]);
+                            buff.push(ask[1]);
+                        }
                     }
                     const checksum = crc32.str(buff.join(":"));
                     expect(checksum).to.be.equal(item.checksum);
